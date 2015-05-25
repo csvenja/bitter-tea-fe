@@ -1,6 +1,22 @@
 var QuestionList = React.createClass({
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
   render: function() {
-    var items = this.props.data.map(function (q) {
+    var items = this.state.data.map(function (q) {
       return (
         <QuestionListItem>
           {q.title}
@@ -25,12 +41,7 @@ var QuestionListItem = React.createClass({
   }
 });
 
-var data = [
-  {title: "Answer to The Ultimate Question of Life, the Universe, and Everything"},
-  {title: "Open the pod bay doors"}
-];
-
 React.render(
-  <QuestionList data={data} />,
+  <QuestionList url="http://localhost:8000/questions/?format=json" />,
   document.getElementById('content')
 );
