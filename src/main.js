@@ -1,3 +1,36 @@
+var App = React.createClass({
+  getInitialState: function() {
+    return {articleID: undefined};
+  },
+  handleLinkClick: function(articleID) {
+    this.setState({"articleID": articleID});
+  },
+  render: function() {
+    var article = undefined;
+    if (this.state.articleID) {
+      article = (
+        <Article articleID={this.state.articleID} />
+      );
+    }
+    return (
+      <div>
+        <QuestionList
+          url="http://localhost:8000/questions/?format=json"
+          handleLinkClick={this.handleLinkClick} />
+        {article}
+      </div>
+    );
+  }
+});
+
+var Article = React.createClass({
+  render: function() {
+    return (
+      <p>{ this.props.articleID }</p>
+    )
+  }
+});
+
 var QuestionList = React.createClass({
   getInitialState: function() {
     return {data: []};
@@ -16,32 +49,21 @@ var QuestionList = React.createClass({
     });
   },
   render: function() {
-    var items = this.state.data.map(function (q) {
-      return (
-        <QuestionListItem>
-          {q.title}
-        </QuestionListItem>
-      );
-    });
     return (
       <ul className="question-list">
-        {items}
+        {this.state.data.map(function(q) {
+          return (
+            <li key={q.id}>
+              <a className="question" onClick={this.props.handleLinkClick.bind(null, q.id)}>{q.title}</a>
+            </li>
+          );
+        }, this)}
       </ul>
     );
   }
 });
 
-var QuestionListItem = React.createClass({
-  render: function() {
-    return (
-      <li>
-        <a className="question" href="">{this.props.children}</a>
-      </li>
-    );
-  }
-});
-
 React.render(
-  <QuestionList url="http://localhost:8000/questions/?format=json" />,
+  <App />,
   document.getElementById('content')
 );

@@ -1,3 +1,36 @@
+var App = React.createClass({displayName: "App",
+  getInitialState: function() {
+    return {articleID: undefined};
+  },
+  handleLinkClick: function(articleID) {
+    this.setState({"articleID": articleID});
+  },
+  render: function() {
+    var article = undefined;
+    if (this.state.articleID) {
+      article = (
+        React.createElement(Article, {articleID: this.state.articleID})
+      );
+    }
+    return (
+      React.createElement("div", null, 
+        React.createElement(QuestionList, {
+          url: "http://localhost:8000/questions/?format=json", 
+          handleLinkClick: this.handleLinkClick}), 
+        article
+      )
+    );
+  }
+});
+
+var Article = React.createClass({displayName: "Article",
+  render: function() {
+    return (
+      React.createElement("p", null,  this.props.articleID)
+    )
+  }
+});
+
 var QuestionList = React.createClass({displayName: "QuestionList",
   getInitialState: function() {
     return {data: []};
@@ -16,32 +49,21 @@ var QuestionList = React.createClass({displayName: "QuestionList",
     });
   },
   render: function() {
-    var items = this.state.data.map(function (q) {
-      return (
-        React.createElement(QuestionListItem, null, 
-          q.title
-        )
-      );
-    });
     return (
       React.createElement("ul", {className: "question-list"}, 
-        items
-      )
-    );
-  }
-});
-
-var QuestionListItem = React.createClass({displayName: "QuestionListItem",
-  render: function() {
-    return (
-      React.createElement("li", null, 
-        React.createElement("a", {className: "question", href: ""}, this.props.children)
+        this.state.data.map(function(q) {
+          return (
+            React.createElement("li", {key: q.id}, 
+              React.createElement("a", {className: "question", onClick: this.props.handleLinkClick.bind(null, q.id)}, q.title)
+            )
+          );
+        }, this)
       )
     );
   }
 });
 
 React.render(
-  React.createElement(QuestionList, {url: "http://localhost:8000/questions/?format=json"}),
+  React.createElement(App, null),
   document.getElementById('content')
 );
