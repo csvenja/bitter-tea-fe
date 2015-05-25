@@ -6,27 +6,88 @@ var App = React.createClass({displayName: "App",
     this.setState({"articleID": articleID});
   },
   render: function() {
-    var article = undefined;
-    if (this.state.articleID) {
-      article = (
-        React.createElement(Article, {articleID: this.state.articleID})
-      );
-    }
     return (
       React.createElement("div", null, 
         React.createElement(QuestionList, {
           url: "http://localhost:8000/questions/?format=json", 
           handleLinkClick: this.handleLinkClick}), 
-        article
+        this.state.articleID && (
+          React.createElement(Article, {articleID: this.state.articleID})
+        )
       )
     );
   }
 });
 
 var Article = React.createClass({displayName: "Article",
+  getInitialState: function() {
+    return {
+      article: {
+        title: "Loading...",
+        reference: []
+      },
+      nextArticleID: undefined
+    };
+  },
+  handleLinkClick: function(articleID) {
+    this.setState({"nextArticleID": articleID});
+  },
+  componentWillReceiveProps: function(nextProps) {
+    var url = "http://localhost:8000/questions/" + nextProps.articleID + "/?format=json";
+    $.ajax({
+      url: url,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({article: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(nextProps.url, status, err.toString());
+      }.bind(this)
+    });
+
+    this.setState({"nextArticleID": undefined});
+  },
+  componentDidMount: function() {
+    this.componentWillReceiveProps(this.props);
+  },
   render: function() {
     return (
-      React.createElement("p", null,  this.props.articleID)
+      React.createElement("div", null, 
+        React.createElement("article", null, 
+          React.createElement("h1", null, this.state.article.title), 
+          React.createElement("ul", {className: "reference-list"}, 
+            this.state.article.reference.map(function(q) {
+              return (
+                React.createElement("li", {key: q}, 
+                  React.createElement("a", {className: "reference", onClick: this.handleLinkClick.bind(null, q)}, "Reference: ", q), 
+                  React.createElement("span", {className: "logic", title: "联系的逻辑属性"}, "TODO"), 
+                  React.createElement("a", {className: "remove-reference"}, "删除")
+                )
+              );
+            }, this)
+          ), 
+          React.createElement("div", {className: "add-reference"}, 
+              React.createElement("select", {className: "add-reference-select"}, 
+                  React.createElement("option", {value: "TODO"}, "TODO")
+              ), 
+              React.createElement("input", {className: "add-reference-logic", type: "text", placeholder: "逻辑属性"}), 
+              React.createElement("input", {className: "current-id", type: "hidden", value: "TODO"}), 
+              React.createElement("button", {className: "add-reference-button"}, "添加联系")
+          ), 
+          React.createElement("div", null, 
+              React.createElement("a", {className: "edit", href: ""}, "编辑"), 
+              React.createElement("p", {className: "content"}, this.state.article.content), 
+              React.createElement("div", {className: "edit-content"}, 
+                  React.createElement("textarea", {className: "edit-pad", type: "text", "data-id": "{{ question.pk }}"}, this.state.article.content), 
+                  React.createElement("button", {className: "edit-submit"}, "提交")
+              )
+          )
+        ), 
+        this.state.nextArticleID && (
+          React.createElement(Article, {articleID: this.state.nextArticleID})
+        )
+      )
     )
   }
 });

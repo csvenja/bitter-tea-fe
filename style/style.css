@@ -58,6 +58,10 @@ button:active {
     background-color: #f7f7f7;
 }
 
+a {
+    cursor: pointer;
+}
+
 .error,
 .info {
     width: 100%;
