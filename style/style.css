@@ -1,0 +1,212 @@
+/* border box */
+html {
+    box-sizing: border-box;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    font-family: "Helvetica Neue", Arial, "Hiragino Sans GB", "Source Han Sans CN", sans-serif;
+    margin: 0;
+    padding: 0 100px;
+    background-color: #f3f3f3;
+    height: 100%;
+    font-size: 18px;
+    line-height: 1.65em;
+
+    width: 100%;
+    overflow-x: scroll;
+}
+
+h1 {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #4A90E2;
+    margin: 0.6em 0;
+}
+
+input[type=text] {
+    width: 100%;
+    font-size: 0.85em;
+    line-height: 1.5em;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+textarea {
+    display: block;
+    width: 100%;
+    height: 320px;
+    font-size: 0.85em;
+    line-height: 1.5em;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+button {
+    font-size: 0.75em;
+    border: 1px solid #ccc;
+    background-color: white;
+    padding: 3px 12px;
+}
+button:active {
+    background-color: #f7f7f7;
+}
+
+.error,
+.info {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    color: #777;
+}
+.error {
+    border: 1px solid #E8B74E;
+    background-color: #FFFAD5;
+}
+.info {
+    border: 1px solid #3CA935;
+    background-color: #EBFFEA;
+}
+
+#content {
+    height: 100%;
+    width: 600px;
+}
+
+article {
+    width: 400px;
+    float: left;
+    background-color: #fffaea;
+    border-left: 1px solid #ccc;
+    height: 100%;
+    padding: 10px 30px;
+    overflow: scroll;
+}
+
+article:last-child {
+    width: 600px;
+    background-color: white;
+    border-right: 1px solid #ccc;
+    font-size: 20px;
+    line-height: 1.65em;
+}
+
+article > div {
+    position: relative;
+}
+
+.edit {
+    position: absolute;
+    left: -15px;
+    color: #F5A623;
+    font-size: 0.7em;
+    font-weight: bold;
+    text-decoration: none;
+    opacity: 0.5;
+}
+.edit:hover {
+    opacity: 1;
+}
+
+.edit-content {
+    display: none;
+    margin-top: 20px;
+    padding-top: 5px;
+}
+
+.edit-pad {
+    margin-left: 20px;
+}
+
+.edit-submit {
+    margin-left: 20px;
+}
+
+.reference-list {
+    list-style-type: square;
+    list-style-position: inside;
+    color: #F5A623;
+    margin-left: 4px;
+}
+
+.reference {
+    font-size: 1.2em;
+    line-height: 1.7em;
+    font-weight: bold;
+    color: #F5A623;
+    text-decoration: none;
+    margin-left: 8px;
+}
+
+.reference:hover {
+    color: #F8C744;
+}
+
+.logic {
+    cursor: help;
+}
+
+.remove-reference {
+    display: none;
+    color: #F5A623;
+    font-size: 0.7em;
+    text-decoration: none;
+    opacity: 0.5;
+}
+.remove-reference:hover {
+    opacity: 1;
+}
+
+.add-reference {
+    display: none;
+}
+.add-reference-select {
+    font-size: 16px;
+}
+input.add-reference-logic {
+    width: 160px;
+    font-size: 0.7em;
+    line-height: 1.2em;
+    padding: 3px;
+}
+
+.question-list {
+    list-style-type: none;
+}
+
+.question-list > li {
+    margin-bottom: 8px;
+}
+
+.question {
+    font-size: 20px;
+    font-weight: bold;
+    color: #F5A623;
+    text-decoration: none;
+}
+.question:hover {
+    color: #F8C744;
+}
+
+.question.new {
+    opacity: 0.5;
+}
+.question.new:hover {
+    opacity: 1;
+}
+
+p {
+    margin-left: 20px;
+}
+
+#page-new input[type=text] {
+    margin-bottom: 10px;
+}
