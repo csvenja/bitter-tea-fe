@@ -1,3 +1,5 @@
+var kBaseURL = "http://localhost:8000"
+
 var App = React.createClass({
   getInitialState: function() {
     return {articleID: null};
@@ -10,9 +12,7 @@ var App = React.createClass({
       <div className="fullheight">
         <article>
           <h1>Your cup, please.</h1>
-          <QuestionList
-            url="http://localhost:8000/questions/?format=json"
-            handleLinkClick={this.handleLinkClick} />
+          <QuestionList handleLinkClick={this.handleLinkClick} />
         </article>
         {this.state.articleID && (
           <Article articleID={this.state.articleID} />
@@ -23,6 +23,7 @@ var App = React.createClass({
 });
 
 var Article = React.createClass({
+  mixins: [React.addons.LinkedStateMixin],
   getInitialState: function() {
     return {
       article: {
@@ -39,8 +40,36 @@ var Article = React.createClass({
   handleEditClick: function() {
     this.setState({"editing": !this.state.editing});
   },
+  handleAddLink: function(e) {
+    e.preventDefault();
+
+    if (this.state.newLinkID == null) {
+      alert("请选择问题");
+      return;
+    }
+
+    var url = kBaseURL + "/add_link/";
+    $.ajax({
+      url: url,
+      method: 'POST',
+      data: {
+        from_id: this.props.articleID,
+        to_id: this.state.newLinkID,
+        logic: this.state.newLinkLogic
+      },
+      success: function(data) {
+        this.setState({newLinkLogic: ""});
+
+        // reload links
+        this.componentWillReceiveProps(this.props);
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(url, status, err.toString());
+      }.bind(this)
+    });
+  },
   componentWillReceiveProps: function(nextProps) {
-    var url = "http://localhost:8000/questions/" + nextProps.articleID + "/?format=json";
+    var url = kBaseURL + "/questions/" + nextProps.articleID + "/?format=json";
     $.ajax({
       url: url,
       dataType: 'json',
@@ -58,6 +87,21 @@ var Article = React.createClass({
   componentDidMount: function() {
     this.componentWillReceiveProps(this.props);
     this.updateContentWidth();
+    this.fetchArticles();
+  },
+  fetchArticles: function() {
+    var url = kBaseURL + "/questions/?format=json";
+    $.ajax({
+      url: url,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({articles: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(url, status, err.toString());
+      }.bind(this)
+    });
   },
   componentWillUnmount: function() {
     this.updateContentWidth();
@@ -78,8 +122,8 @@ var Article = React.createClass({
           <ul className="reference-list">
             {this.state.article.reference.map(function(q) {
               return (
-                <li key={q}>
-                  <a className="reference" onClick={this.handleLinkClick.bind(null, q)}>Reference: {q}</a>{' '}
+                <li key={q.id}>
+                  <a className="reference" onClick={this.handleLinkClick.bind(null, q.id)}>{q.title}</a>{' '}
                   <span className="logic" title="联系的逻辑属性">TODO</span>{' '}
                   {this.state.editing && (
                     <a className="remove-reference">删除</a>
@@ -91,15 +135,20 @@ var Article = React.createClass({
           {this.state.editing && (
             <div className="add-reference">
               <form className="form-inline">
-                <select className="form-control">
-                    <option value="TODO">TODO</option>
+                <select className="form-control" valueLink={this.linkState('newLinkID')}>
+                  <option value="-1" disabled="disabled" selected>Select question</option>
+                  {this.state.articles.map(function(q) {
+                    return (
+                      <option value={q.id} key={q.id}>{q.title}</option>
+                    );
+                  }, this)}
                 </select>{' '}
-                <input className="form-control" type="text" placeholder="逻辑属性" />{' '}
-                <button className="btn btn-default">添加联系</button>{' '}
-                <button type="button" className="btn btn-default" data-toggle="modal" data-target="#compose">新建问题</button>
+                <input className="form-control" type="text" placeholder="逻辑属性" valueLink={this.linkState('newLinkLogic')} />{' '}
+                <button className="btn btn-default" onClick={this.handleAddLink}>添加联系</button>{' '}
+                <button className="btn btn-default" data-toggle="modal" data-target="#compose">新建问题</button>
               </form>
 
-              <div className="modal fade" id="compose" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div className="modal fade" id="compose" tabindex="-1" role="dialog" aria-hidden="true">
                 <div className="modal-dialog">
                   <div className="modal-content">
                     <div className="modal-header">
@@ -153,7 +202,7 @@ var QuestionList = React.createClass({
   },
   componentDidMount: function() {
     $.ajax({
-      url: this.props.url,
+      url: kBaseURL + "/questions/?format=json",
       dataType: 'json',
       cache: false,
       success: function(data) {
