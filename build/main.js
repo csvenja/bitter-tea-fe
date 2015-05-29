@@ -7,7 +7,7 @@ var App = React.createClass({displayName: "App",
   },
   render: function() {
     return (
-      React.createElement("div", {className: "container"}, 
+      React.createElement("div", {className: "fullheight"}, 
         React.createElement("article", null, 
           React.createElement("h1", null, "Your cup, please."), 
           React.createElement(QuestionList, {
@@ -72,15 +72,15 @@ var Article = React.createClass({displayName: "Article",
   },
   render: function() {
     return (
-      React.createElement("div", {className: "container"}, 
+      React.createElement("div", {className: "fullheight"}, 
         React.createElement("article", null, 
           React.createElement("h1", null, this.state.article.title), 
           React.createElement("ul", {className: "reference-list"}, 
             this.state.article.reference.map(function(q) {
               return (
                 React.createElement("li", {key: q}, 
-                  React.createElement("a", {className: "reference", onClick: this.handleLinkClick.bind(null, q)}, "Reference: ", q), 
-                  React.createElement("span", {className: "logic", title: "联系的逻辑属性"}, "TODO"), 
+                  React.createElement("a", {className: "reference", onClick: this.handleLinkClick.bind(null, q)}, "Reference: ", q), ' ', 
+                  React.createElement("span", {className: "logic", title: "联系的逻辑属性"}, "TODO"), ' ', 
                   this.state.editing && (
                     React.createElement("a", {className: "remove-reference"}, "删除")
                   )
@@ -90,12 +90,44 @@ var Article = React.createClass({displayName: "Article",
           ), 
           this.state.editing && (
             React.createElement("div", {className: "add-reference"}, 
-                React.createElement("select", {className: "add-reference-select"}, 
+              React.createElement("form", {className: "form-inline"}, 
+                React.createElement("select", {className: "form-control"}, 
                     React.createElement("option", {value: "TODO"}, "TODO")
-                ), 
-                React.createElement("input", {className: "add-reference-logic", type: "text", placeholder: "逻辑属性"}), 
-                React.createElement("input", {className: "current-id", type: "hidden", value: "TODO"}), 
-                React.createElement("button", {className: "add-reference-button"}, "添加联系")
+                ), ' ', 
+                React.createElement("input", {className: "form-control", type: "text", placeholder: "逻辑属性"}), ' ', 
+                React.createElement("button", {className: "btn btn-default"}, "添加联系"), ' ', 
+                React.createElement("button", {type: "button", className: "btn btn-default", "data-toggle": "modal", "data-target": "#compose"}, "新建问题")
+              ), 
+
+              React.createElement("div", {className: "modal fade", id: "compose", tabindex: "-1", role: "dialog", "aria-labelledby": "myModalLabel", "aria-hidden": "true"}, 
+                React.createElement("div", {className: "modal-dialog"}, 
+                  React.createElement("div", {className: "modal-content"}, 
+                    React.createElement("div", {className: "modal-header"}, 
+                      React.createElement("button", {type: "button", className: "close", "data-dismiss": "modal", "aria-label": "Close"}, React.createElement("span", {"aria-hidden": "true"}, "×")), 
+                      React.createElement("h4", {className: "modal-title"}, "新建问题")
+                    ), 
+                    React.createElement("div", {className: "modal-body"}, 
+                      React.createElement("form", {className: "form-horizontal"}, 
+                        React.createElement("div", {className: "form-group"}, 
+                          React.createElement("div", {className: "col-sm-12"}, 
+                            React.createElement("input", {type: "email", className: "form-control", placeholder: "标题"})
+                          )
+                        ), 
+                        React.createElement("div", {className: "form-group"}, 
+                          React.createElement("div", {className: "col-sm-12"}, 
+                            React.createElement("textarea", {className: "form-control", rows: "12", placeholder: "内容"})
+                          )
+                        )
+                      )
+                    ), 
+                    React.createElement("div", {className: "modal-footer"}, 
+                      React.createElement("button", {type: "button", className: "btn btn-default", "data-dismiss": "modal"}, "取消"), 
+                      React.createElement("button", {type: "button", className: "btn btn-primary"}, "提交")
+                    )
+                  )
+                )
+              )
+
             )
           ), 
           React.createElement("div", null, 

@@ -7,7 +7,7 @@ var App = React.createClass({
   },
   render: function() {
     return (
-      <div className="container">
+      <div className="fullheight">
         <article>
           <h1>Your cup, please.</h1>
           <QuestionList
@@ -72,15 +72,15 @@ var Article = React.createClass({
   },
   render: function() {
     return (
-      <div className="container">
+      <div className="fullheight">
         <article>
           <h1>{this.state.article.title}</h1>
           <ul className="reference-list">
             {this.state.article.reference.map(function(q) {
               return (
                 <li key={q}>
-                  <a className="reference" onClick={this.handleLinkClick.bind(null, q)}>Reference: {q}</a>
-                  <span className="logic" title="联系的逻辑属性">TODO</span>
+                  <a className="reference" onClick={this.handleLinkClick.bind(null, q)}>Reference: {q}</a>{' '}
+                  <span className="logic" title="联系的逻辑属性">TODO</span>{' '}
                   {this.state.editing && (
                     <a className="remove-reference">删除</a>
                   )}
@@ -90,12 +90,44 @@ var Article = React.createClass({
           </ul>
           {this.state.editing && (
             <div className="add-reference">
-                <select className="add-reference-select">
+              <form className="form-inline">
+                <select className="form-control">
                     <option value="TODO">TODO</option>
-                </select>
-                <input className="add-reference-logic" type="text" placeholder="逻辑属性" />
-                <input className="current-id" type="hidden" value="TODO" />
-                <button className="add-reference-button">添加联系</button>
+                </select>{' '}
+                <input className="form-control" type="text" placeholder="逻辑属性" />{' '}
+                <button className="btn btn-default">添加联系</button>{' '}
+                <button type="button" className="btn btn-default" data-toggle="modal" data-target="#compose">新建问题</button>
+              </form>
+
+              <div className="modal fade" id="compose" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      <h4 className="modal-title">新建问题</h4>
+                    </div>
+                    <div className="modal-body">
+                      <form className="form-horizontal">
+                        <div className="form-group">
+                          <div className="col-sm-12">
+                            <input type="email" className="form-control" placeholder="标题" />
+                          </div>
+                        </div>
+                        <div className="form-group">
+                          <div className="col-sm-12">
+                            <textarea className="form-control" rows="12" placeholder="内容"></textarea>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                    <div className="modal-footer">
+                      <button type="button" className="btn btn-default" data-dismiss="modal">取消</button>
+                      <button type="button" className="btn btn-primary">提交</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           )}
           <div>
