@@ -1,16 +1,19 @@
 var App = React.createClass({
   getInitialState: function() {
-    return {articleID: undefined};
+    return {articleID: null};
   },
   handleLinkClick: function(articleID) {
     this.setState({"articleID": articleID});
   },
   render: function() {
     return (
-      <div>
-        <QuestionList
-          url="http://localhost:8000/questions/?format=json"
-          handleLinkClick={this.handleLinkClick} />
+      <div className="container">
+        <article>
+          <h1>Your cup, please.</h1>
+          <QuestionList
+            url="http://localhost:8000/questions/?format=json"
+            handleLinkClick={this.handleLinkClick} />
+        </article>
         {this.state.articleID && (
           <Article articleID={this.state.articleID} />
         )}
@@ -26,11 +29,15 @@ var Article = React.createClass({
         title: "Loading...",
         reference: []
       },
-      nextArticleID: undefined
+      nextArticleID: null,
+      editing: false
     };
   },
   handleLinkClick: function(articleID) {
     this.setState({"nextArticleID": articleID});
+  },
+  handleEditClick: function() {
+    this.setState({"editing": !this.state.editing});
   },
   componentWillReceiveProps: function(nextProps) {
     var url = "http://localhost:8000/questions/" + nextProps.articleID + "/?format=json";
@@ -46,14 +53,26 @@ var Article = React.createClass({
       }.bind(this)
     });
 
-    this.setState({"nextArticleID": undefined});
+    this.setState({"nextArticleID": null});
   },
   componentDidMount: function() {
     this.componentWillReceiveProps(this.props);
+    this.updateContentWidth();
+  },
+  componentWillUnmount: function() {
+    this.updateContentWidth();
+  },
+  updateContentWidth: function() {
+    var n_articles = $("article").length;
+    var width = 600;
+    if (n_articles > 1) {
+      width += 400 * (n_articles - 1);
+    }
+    $("#content").width(width);
   },
   render: function() {
     return (
-      <div>
+      <div className="container">
         <article>
           <h1>{this.state.article.title}</h1>
           <ul className="reference-list">
@@ -62,21 +81,25 @@ var Article = React.createClass({
                 <li key={q}>
                   <a className="reference" onClick={this.handleLinkClick.bind(null, q)}>Reference: {q}</a>
                   <span className="logic" title="联系的逻辑属性">TODO</span>
-                  <a className="remove-reference">删除</a>
+                  {this.state.editing && (
+                    <a className="remove-reference">删除</a>
+                  )}
                 </li>
               );
             }, this)}
           </ul>
-          <div className="add-reference">
-              <select className="add-reference-select">
-                  <option value="TODO">TODO</option>
-              </select>
-              <input className="add-reference-logic" type="text" placeholder="逻辑属性" />
-              <input className="current-id" type="hidden" value="TODO" />
-              <button className="add-reference-button">添加联系</button>
-          </div>
+          {this.state.editing && (
+            <div className="add-reference">
+                <select className="add-reference-select">
+                    <option value="TODO">TODO</option>
+                </select>
+                <input className="add-reference-logic" type="text" placeholder="逻辑属性" />
+                <input className="current-id" type="hidden" value="TODO" />
+                <button className="add-reference-button">添加联系</button>
+            </div>
+          )}
           <div>
-              <a className="edit" href="">编辑</a>
+              <a className="edit" onClick={this.handleEditClick}>{this.state.editing ? "取消" : "编辑"}</a>
               <p className="content">{this.state.article.content}</p>
               <div className="edit-content">
                   <textarea className="edit-pad" type="text" data-id="{{ question.pk }}">{this.state.article.content}</textarea>
