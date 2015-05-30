@@ -68,6 +68,24 @@ var Article = React.createClass({displayName: "Article",
       }.bind(this)
     });
   },
+  handleRemoveLink: function(articleID) {
+    var url = kBaseURL + "/remove_link/";
+    $.ajax({
+      url: url,
+      method: 'POST',
+      data: {
+        from_id: this.props.articleID,
+        to_id: articleID
+      },
+      success: function(data) {
+        // reload links
+        this.componentWillReceiveProps(this.props);
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(url, status, err.toString());
+      }.bind(this)
+    });
+  },
   componentWillReceiveProps: function(nextProps) {
     var url = kBaseURL + "/questions/" + nextProps.articleID + "/?format=json";
     $.ajax({
@@ -126,7 +144,7 @@ var Article = React.createClass({displayName: "Article",
                   React.createElement("a", {className: "reference", onClick: this.handleLinkClick.bind(null, q.id)}, q.title), ' ', 
                   React.createElement("span", {className: "logic", title: "联系的逻辑属性"}, "TODO"), ' ', 
                   this.state.editing && (
-                    React.createElement("a", {className: "remove-reference"}, "删除")
+                    React.createElement("a", {className: "remove-reference", onClick: this.handleRemoveLink.bind(null, q.id)}, "删除")
                   )
                 )
               );
