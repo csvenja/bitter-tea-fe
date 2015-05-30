@@ -86,6 +86,37 @@ var Article = React.createClass({displayName: "Article",
       }.bind(this)
     });
   },
+  handleAddArticle: function(e) {
+    if (this.state.newArticleTitle == null || this.state.newArticleTitle == "" ||
+      this.state.newArticleContent == null || this.state.newArticleContent == "") {
+      alert("请填写标题和内容");
+      return;
+    }
+
+    var url = kBaseURL + "/questions/";
+    $.ajax({
+      url: url,
+      method: 'POST',
+      data: {
+        title: this.state.newArticleTitle,
+        content: this.state.newArticleContent
+      },
+      success: function(data) {
+        this.setState({
+          newArticleTitle: "",
+          newArticleContent: ""
+        });
+
+        $("#compose").modal("hide");
+
+        // reload articles
+        this.fetchArticles();
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(xhr, url, status, err.toString());
+      }.bind(this)
+    });
+  },
   componentWillReceiveProps: function(nextProps) {
     var url = kBaseURL + "/questions/" + nextProps.articleID + "/?format=json";
     $.ajax({
@@ -152,7 +183,7 @@ var Article = React.createClass({displayName: "Article",
           ), 
           this.state.editing && (
             React.createElement("div", {className: "add-reference"}, 
-              React.createElement("form", {className: "form-inline"}, 
+              React.createElement("div", {className: "form-inline"}, 
                 React.createElement("select", {className: "form-control", valueLink: this.linkState('newLinkID')}, 
                   React.createElement("option", {value: "-1", disabled: "disabled", selected: true}, "Select question"), 
                   this.state.articles.map(function(q) {
@@ -177,19 +208,19 @@ var Article = React.createClass({displayName: "Article",
                       React.createElement("form", {className: "form-horizontal"}, 
                         React.createElement("div", {className: "form-group"}, 
                           React.createElement("div", {className: "col-sm-12"}, 
-                            React.createElement("input", {type: "email", className: "form-control", placeholder: "标题"})
+                            React.createElement("input", {type: "email", className: "form-control", placeholder: "标题", valueLink: this.linkState('newArticleTitle')})
                           )
                         ), 
                         React.createElement("div", {className: "form-group"}, 
                           React.createElement("div", {className: "col-sm-12"}, 
-                            React.createElement("textarea", {className: "form-control", rows: "12", placeholder: "内容"})
+                            React.createElement("textarea", {className: "form-control", rows: "12", placeholder: "内容", valueLink: this.linkState('newArticleContent')})
                           )
                         )
                       )
                     ), 
                     React.createElement("div", {className: "modal-footer"}, 
                       React.createElement("button", {type: "button", className: "btn btn-default", "data-dismiss": "modal"}, "取消"), 
-                      React.createElement("button", {type: "button", className: "btn btn-primary"}, "提交")
+                      React.createElement("button", {type: "button", className: "btn btn-primary", onClick: this.handleAddArticle}, "提交")
                     )
                   )
                 )

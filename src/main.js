@@ -86,6 +86,37 @@ var Article = React.createClass({
       }.bind(this)
     });
   },
+  handleAddArticle: function(e) {
+    if (this.state.newArticleTitle == null || this.state.newArticleTitle == "" ||
+      this.state.newArticleContent == null || this.state.newArticleContent == "") {
+      alert("请填写标题和内容");
+      return;
+    }
+
+    var url = kBaseURL + "/questions/";
+    $.ajax({
+      url: url,
+      method: 'POST',
+      data: {
+        title: this.state.newArticleTitle,
+        content: this.state.newArticleContent
+      },
+      success: function(data) {
+        this.setState({
+          newArticleTitle: "",
+          newArticleContent: ""
+        });
+
+        $("#compose").modal("hide");
+
+        // reload articles
+        this.fetchArticles();
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(xhr, url, status, err.toString());
+      }.bind(this)
+    });
+  },
   componentWillReceiveProps: function(nextProps) {
     var url = kBaseURL + "/questions/" + nextProps.articleID + "/?format=json";
     $.ajax({
@@ -152,7 +183,7 @@ var Article = React.createClass({
           </ul>
           {this.state.editing && (
             <div className="add-reference">
-              <form className="form-inline">
+              <div className="form-inline">
                 <select className="form-control" valueLink={this.linkState('newLinkID')}>
                   <option value="-1" disabled="disabled" selected>Select question</option>
                   {this.state.articles.map(function(q) {
@@ -164,7 +195,7 @@ var Article = React.createClass({
                 <input className="form-control" type="text" placeholder="逻辑属性" valueLink={this.linkState('newLinkLogic')} />{' '}
                 <button className="btn btn-default" onClick={this.handleAddLink}>添加联系</button>{' '}
                 <button className="btn btn-default" data-toggle="modal" data-target="#compose">新建问题</button>
-              </form>
+              </div>
 
               <div className="modal fade" id="compose" tabindex="-1" role="dialog" aria-hidden="true">
                 <div className="modal-dialog">
@@ -177,19 +208,19 @@ var Article = React.createClass({
                       <form className="form-horizontal">
                         <div className="form-group">
                           <div className="col-sm-12">
-                            <input type="email" className="form-control" placeholder="标题" />
+                            <input type="email" className="form-control" placeholder="标题" valueLink={this.linkState('newArticleTitle')} />
                           </div>
                         </div>
                         <div className="form-group">
                           <div className="col-sm-12">
-                            <textarea className="form-control" rows="12" placeholder="内容"></textarea>
+                            <textarea className="form-control" rows="12" placeholder="内容" valueLink={this.linkState('newArticleContent')} />
                           </div>
                         </div>
                       </form>
                     </div>
                     <div className="modal-footer">
                       <button type="button" className="btn btn-default" data-dismiss="modal">取消</button>
-                      <button type="button" className="btn btn-primary">提交</button>
+                      <button type="button" className="btn btn-primary" onClick={this.handleAddArticle}>提交</button>
                     </div>
                   </div>
                 </div>
