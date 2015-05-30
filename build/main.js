@@ -1,4 +1,5 @@
-var kBaseURL = "http://localhost:8000"
+var kBaseURL = "http://bitter-tea.svenja.im"
+// var kBaseURL = "http://localhost:8000"
 
 var App = React.createClass({displayName: "App",
   getInitialState: function() {
