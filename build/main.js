@@ -88,9 +88,8 @@ var Article = React.createClass({displayName: "Article",
     });
   },
   handleAddArticle: function(e) {
-    if (this.state.newArticleTitle == null || this.state.newArticleTitle == "" ||
-      this.state.newArticleContent == null || this.state.newArticleContent == "") {
-      alert("请填写标题和内容");
+    if (this.state.newArticleTitle == null || this.state.newArticleTitle == "") {
+      alert("请填写标题");
       return;
     }
 
@@ -118,6 +117,26 @@ var Article = React.createClass({displayName: "Article",
       }.bind(this)
     });
   },
+  handleEditArticle: function() {
+    var url = kBaseURL + "/questions/" + this.state.article.id + "/";
+    $.ajax({
+      url: url,
+      method: 'PUT',
+      data: {
+        title: this.state.article.title,
+        content: this.state.editedArticleContent
+      },
+      success: function(data) {
+        // reload article
+        this.componentWillReceiveProps(this.props);
+
+        this.setState({editing: false});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(xhr, url, status, err.toString());
+      }.bind(this)
+    });
+  },
   componentWillReceiveProps: function(nextProps) {
     var url = kBaseURL + "/questions/" + nextProps.articleID + "/?format=json";
     $.ajax({
@@ -126,6 +145,7 @@ var Article = React.createClass({displayName: "Article",
       cache: false,
       success: function(data) {
         this.setState({article: data});
+        this.setState({editedArticleContent: data.content})
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(nextProps.url, status, err.toString());
@@ -220,8 +240,8 @@ var Article = React.createClass({displayName: "Article",
                       )
                     ), 
                     React.createElement("div", {className: "modal-footer"}, 
-                      React.createElement("button", {type: "button", className: "btn btn-default", "data-dismiss": "modal"}, "取消"), 
-                      React.createElement("button", {type: "button", className: "btn btn-primary", onClick: this.handleAddArticle}, "提交")
+                      React.createElement("button", {className: "btn btn-default", "data-dismiss": "modal"}, "取消"), 
+                      React.createElement("button", {className: "btn btn-primary", onClick: this.handleAddArticle}, "提交")
                     )
                   )
                 )
@@ -231,10 +251,13 @@ var Article = React.createClass({displayName: "Article",
           ), 
           React.createElement("div", null, 
               React.createElement("a", {className: "edit", onClick: this.handleEditClick}, this.state.editing ? "取消" : "编辑"), 
-              React.createElement("p", {className: "content"}, this.state.article.content), 
-              React.createElement("div", {className: "edit-content"}, 
-                  React.createElement("textarea", {className: "edit-pad", type: "text", "data-id": "{{ question.pk }}"}, this.state.article.content), 
-                  React.createElement("button", {className: "edit-submit"}, "提交")
+              this.state.editing ? (
+                React.createElement("div", null, 
+                    React.createElement("textarea", {className: "form-control", rows: "12", "data-id": "{{ question.pk }}", valueLink: this.linkState('editedArticleContent')}), 
+                    React.createElement("button", {className: "btn btn-default", onClick: this.handleEditArticle}, "提交")
+                )
+              ) : (
+                React.createElement("p", {className: "content"}, this.state.article.content)
               )
           )
         ), 

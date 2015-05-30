@@ -96,20 +96,6 @@ article > div {
     opacity: 1;
 }
 
-.edit-content {
-    display: none;
-    margin-top: 20px;
-    padding-top: 5px;
-}
-
-.edit-pad {
-    margin-left: 20px;
-}
-
-.edit-submit {
-    margin-left: 20px;
-}
-
 .reference-list {
     list-style-type: square;
     list-style-position: inside;
