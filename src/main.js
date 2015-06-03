@@ -6,10 +6,10 @@ var kBaseURL = "http://bitter-tea.svenja.im"
 
 var App = React.createClass({
   getInitialState: function() {
-    return {articleID: null};
+    return {nextArticleID: null};
   },
   handleLinkClick: function(articleID) {
-    this.setState({"articleID": articleID});
+    this.setState({"nextArticleID": articleID});
   },
   render: function() {
     return (
@@ -18,8 +18,8 @@ var App = React.createClass({
           <h1>Your cup, please.</h1>
           <QuestionList handleLinkClick={this.handleLinkClick} />
         </article>
-        {this.state.articleID && (
-          <Article articleID={this.state.articleID} />
+        {this.state.nextArticleID && (
+          <Article articleID={this.state.nextArticleID} parent={this} />
         )}
       </div>
     );
@@ -37,6 +37,9 @@ var Article = React.createClass({
       nextArticleID: null,
       editing: false
     };
+  },
+  handleCloseClick: function() {
+    this.props.parent.setState({nextArticleID: null});
   },
   handleLinkClick: function(articleID) {
     this.setState({"nextArticleID": articleID});
@@ -196,6 +199,7 @@ var Article = React.createClass({
       <div className="fullheight">
         <article>
           <h1>{this.state.article.title}</h1>
+          <a className="close" onClick={this.handleCloseClick}>X</a>
           <ul className="reference-list">
             {this.state.article.reference.map(function(q) {
               return (
@@ -268,7 +272,7 @@ var Article = React.createClass({
           </div>
         </article>
         {this.state.nextArticleID && (
-          <Article articleID={this.state.nextArticleID} />
+          <Article articleID={this.state.nextArticleID} parent={this} />
         )}
       </div>
     )

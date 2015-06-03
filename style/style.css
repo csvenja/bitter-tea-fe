@@ -69,6 +69,7 @@ article {
     height: 100%;
     padding: 10px 30px;
     overflow: scroll;
+    position: relative;
 }
 
 article:last-child {
@@ -81,6 +82,12 @@ article:last-child {
 
 article > div {
     position: relative;
+}
+
+a.close {
+    position: absolute;
+    right: 24px;
+    top: 24px;
 }
 
 .edit {
