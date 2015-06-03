@@ -8,6 +8,7 @@
     "react-select": "^0.4.9"
   },
   "devDependencies": {
-    "reactify": "^1.1.1"
+    "reactify": "^1.1.1",
+    "uglifyify": "^3.0.1"
   }
 }
