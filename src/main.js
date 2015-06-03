@@ -140,6 +140,10 @@ var Article = React.createClass({
       }.bind(this)
     });
   },
+  onNewLinkChange: function(value) {
+    console.log("Selected " + value);
+    this.setState({newLinkID: value});
+  },
   componentWillReceiveProps: function(nextProps) {
     var url = kBaseURL + "/questions/" + nextProps.articleID + "/?format=json";
     $.ajax({
@@ -208,14 +212,13 @@ var Article = React.createClass({
           {this.state.editing && (
             <div className="add-reference">
               <div className="form-inline">
-                <select className="form-control" valueLink={this.linkState('newLinkID')}>
-                  <option value="-1" disabled="disabled" selected>Select question</option>
-                  {this.state.articles.map(function(q) {
-                    return (
-                      <option value={q.id} key={q.id}>{q.title}</option>
-                    );
+                <Select
+                  value={this.state.newLinkID}
+                  options={this.state.articles.map(function(q) {
+                    return { value: q.id, label: q.title };
                   }, this)}
-                </select>{' '}
+                  onChange={this.onNewLinkChange}
+                  placeholder="输入问题…" />{' '}
                 <input className="form-control" type="text" placeholder="逻辑属性" valueLink={this.linkState('newLinkLogic')} />{' '}
                 <button className="btn btn-default" onClick={this.handleAddLink}>添加联系</button>{' '}
                 <button className="btn btn-default" data-toggle="modal" data-target="#compose">新建问题</button>
