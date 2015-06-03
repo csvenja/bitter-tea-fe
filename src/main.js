@@ -1,3 +1,6 @@
+var React = require('react/addons');
+var Select = require('react-select');
+
 var kBaseURL = "http://bitter-tea.svenja.im"
 // var kBaseURL = "http://localhost:8000"
 

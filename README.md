@@ -1,4 +1,5 @@
 ```sh
-npm install -g react-tools
-jsx --watch src/ build/
+npm install -g browserify watchify
+npm install
+watchify -t reactify src/main.js -o build/main.js
 ```
