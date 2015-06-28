@@ -16,8 +16,8 @@
 	margin: auto;
 }
 
-.typeahead {
-  width: 500px;
+.twitter-typeahead {
+  width: 40%;
 }
 
 .tt-hint {
