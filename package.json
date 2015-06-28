@@ -5,10 +5,12 @@
   "author": "Svenja Cao <c.svenjax@gmail.com>, Dongyuan Liu <liu.dongyuan@gmail.com>",
   "dependencies": {
     "react": "^0.13.3",
-    "react-select": "^0.4.9"
+    "react-select": "^0.4.9",
+    "typeahead.js": "^0.11.1"
   },
   "devDependencies": {
     "reactify": "^1.1.1",
+    "typeahead.js": "^0.11.1",
     "uglifyify": "^3.0.1"
   }
 }
