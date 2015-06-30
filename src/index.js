@@ -36,5 +36,5 @@ $.ajax({
 });
 
 $('#search .typeahead').bind('typeahead:selected', function(obj, datum, name) {      
-  window.location.href = "/main.html#" + datum.id;
+  window.location.href = "main.html#" + datum.id;
 });
