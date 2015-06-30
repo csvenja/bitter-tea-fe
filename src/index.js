@@ -1,35 +1,41 @@
-var substringMatcher = function(strs) {
-  return function findMatches(q, cb) {
+var kQuestionListURL = "http://bitter-tea.svenja.im/questions/?format=json";
+
+var questionMatcher = function(questions) {
+  return function findMatches(q, callback) {
     var matches = [],
         substrRegex = new RegExp(q, 'i');
 
-    $.each(strs, function(i, str) {
-      if (substrRegex.test(str)) {
-        matches.push(str);
+    $.each(questions, function(i, q) {
+      if (substrRegex.test(q.title)) {
+        matches.push(q.title);
       }
     });
 
-    cb(matches);
+    callback(matches);
   };
 };
 
-var states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California',
-  'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii',
-  'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
-  'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
-  'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
-  'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
-  'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
-  'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
-  'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
-];
+$.ajax({
+  url: kQuestionListURL,
+  dataType: 'json',
+  success: function(data) {
+    $('#search .typeahead').typeahead({
+      hint: true,
+      highlight: true,
+      minLength: 1
+    },
+    {
+      name: 'questions',
+      source: questionMatcher(data)
+    });
+  },
+  error: function(xhr, status, err) {
+    console.error(status, err.toString());
+  }
+});
 
-$('#search .typeahead').typeahead({
-  hint: true,
-  highlight: true,
-  minLength: 1
-},
-{
-  name: 'states',
-  source: substringMatcher(states)
+$('#search .typeahead').bind('typeahead:selected', function(obj, datum, name) {      
+  alert(JSON.stringify(obj));
+  alert(JSON.stringify(datum));
+  alert(JSON.stringify(name));
 });
