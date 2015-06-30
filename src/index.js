@@ -7,7 +7,7 @@ var questionMatcher = function(questions) {
 
     $.each(questions, function(i, q) {
       if (substrRegex.test(q.title)) {
-        matches.push(q.title);
+        matches.push(q);
       }
     });
 
@@ -26,6 +26,7 @@ $.ajax({
     },
     {
       name: 'questions',
+      displayKey: 'title',
       source: questionMatcher(data)
     });
   },
@@ -35,7 +36,5 @@ $.ajax({
 });
 
 $('#search .typeahead').bind('typeahead:selected', function(obj, datum, name) {      
-  alert(JSON.stringify(obj));
-  alert(JSON.stringify(datum));
-  alert(JSON.stringify(name));
+  window.location.href = "/main.html#" + datum.id;
 });

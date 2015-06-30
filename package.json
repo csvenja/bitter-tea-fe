@@ -5,7 +5,8 @@
   "author": "Svenja Cao <c.svenjax@gmail.com>, Dongyuan Liu <liu.dongyuan@gmail.com>",
   "dependencies": {
     "react": "^0.13.3",
-    "react-select": "^0.4.9"
+    "react-select": "^0.4.9",
+    "rlite-router": "^1.0.91"
   },
   "devDependencies": {
     "reactify": "^1.1.1",

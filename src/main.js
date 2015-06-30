@@ -1,12 +1,16 @@
 var React = require('react/addons');
+var Rlite = require('rlite-router');
 var Select = require('react-select');
 
 var kBaseURL = "http://bitter-tea.svenja.im"
 // var kBaseURL = "http://localhost:8000"
 
 var App = React.createClass({
+  componentDidMount: function () {
+    console.log(this.props);
+  },
   getInitialState: function() {
-    return {nextArticleID: null};
+    return {nextArticleID: this.props.nextArticleID};
   },
   handleLinkClick: function(articleID) {
     this.setState({"nextArticleID": articleID});
@@ -311,7 +315,25 @@ var QuestionList = React.createClass({
   }
 });
 
-React.render(
-  <App />,
-  document.getElementById('content')
-);
+
+routes = new Rlite();
+routes.add('', function () {
+  React.render(
+    <App />,
+    document.getElementById('content')
+  );
+});
+routes.add(':id', function(r) {
+  React.render(
+    <App nextArticleID={r.params.id} />,
+    document.getElementById('content')
+  );
+});
+
+// Hash-based routing
+function processHash() {
+  var hash = location.hash || '#';
+  routes.run(hash.slice(1));
+}
+window.addEventListener('hashchange', processHash);
+processHash();
