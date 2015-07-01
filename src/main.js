@@ -39,11 +39,15 @@ var Article = React.createClass({
         reference: []
       },
       nextArticleID: null,
+      showContent: false,
       editing: false
     };
   },
   handleCloseClick: function() {
     this.props.parent.setState({nextArticleID: null});
+  },
+  handleShowContent: function() {
+    this.setState({"showContent": true});
   },
   handleLinkClick: function(articleID) {
     this.setState({"nextArticleID": articleID});
@@ -167,6 +171,8 @@ var Article = React.createClass({
     });
 
     this.setState({"nextArticleID": null});
+    this.setState({"showContent": false});
+    this.setState({"editing": false});
   },
   componentDidMount: function() {
     this.componentWillReceiveProps(this.props);
@@ -204,76 +210,86 @@ var Article = React.createClass({
         <article>
           <h1>{this.state.article.title}</h1>
           <a className="close" onClick={this.handleCloseClick}>X</a>
-          <ul className="reference-list">
-            {this.state.article.reference.map(function(q) {
-              return (
-                <li key={q.id}>
-                  <a className="reference" onClick={this.handleLinkClick.bind(null, q.id)}>{q.title}</a>{' '}
-                  <span className="logic" title="联系的逻辑属性">TODO</span>{' '}
-                  {this.state.editing && (
-                    <a className="remove-reference" onClick={this.handleRemoveLink.bind(null, q.id)}>删除</a>
-                  )}
-                </li>
-              );
-            }, this)}
-          </ul>
-          {this.state.editing && (
-            <div className="add-reference">
-              <div className="form-inline">
-                <Select
-                  value={this.state.newLinkID}
-                  options={this.state.articles.map(function(q) {
-                    return { value: q.id, label: q.title };
-                  }, this)}
-                  onChange={this.onNewLinkChange}
-                  placeholder="输入问题…" />{' '}
-                <input className="form-control" type="text" placeholder="逻辑属性" valueLink={this.linkState('newLinkLogic')} />{' '}
-                <button className="btn btn-default" onClick={this.handleAddLink}>添加联系</button>{' '}
-                <button className="btn btn-default" data-toggle="modal" data-target="#compose">新建问题</button>
-              </div>
+          <div className="draft">
+            <textarea className="form-control" rows="8" placeholder="这是一张草稿纸，你可以写下自己的想法，然后点击「查看网站内容」查看网站上已有的内容。" />
+            {this.state.showContent || (
+              <button className="btn btn-default" onClick={this.handleShowContent}>查看网站内容</button>
+            )}
+          </div>
+          {this.state.showContent && (
+            <div>
+              <ul className="reference-list">
+                {this.state.article.reference.map(function(q) {
+                  return (
+                    <li key={q.id}>
+                      <a className="reference" onClick={this.handleLinkClick.bind(null, q.id)}>{q.title}</a>{' '}
+                      <span className="logic" title="联系的逻辑属性">TODO</span>{' '}
+                      {this.state.editing && (
+                        <a className="remove-reference" onClick={this.handleRemoveLink.bind(null, q.id)}>删除</a>
+                      )}
+                    </li>
+                  );
+                }, this)}
+              </ul>
+              {this.state.editing && (
+                <div className="add-reference">
+                  <div className="form-inline">
+                    <Select
+                      value={this.state.newLinkID}
+                      options={this.state.articles.map(function(q) {
+                        return { value: q.id, label: q.title };
+                      }, this)}
+                      onChange={this.onNewLinkChange}
+                      placeholder="输入问题…" />{' '}
+                    <input className="form-control" type="text" placeholder="逻辑属性" valueLink={this.linkState('newLinkLogic')} />{' '}
+                    <button className="btn btn-default" onClick={this.handleAddLink}>添加联系</button>{' '}
+                    <button className="btn btn-default" data-toggle="modal" data-target="#compose">新建问题</button>
+                  </div>
 
-              <div className="modal fade" id="compose" tabindex="-1" role="dialog" aria-hidden="true">
-                <div className="modal-dialog">
-                  <div className="modal-content">
-                    <div className="modal-header">
-                      <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                      <h4 className="modal-title">新建问题</h4>
-                    </div>
-                    <div className="modal-body">
-                      <form className="form-horizontal">
-                        <div className="form-group">
-                          <div className="col-sm-12">
-                            <input type="email" className="form-control" placeholder="标题" valueLink={this.linkState('newArticleTitle')} />
-                          </div>
+                  <div className="modal fade" id="compose" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div className="modal-dialog">
+                      <div className="modal-content">
+                        <div className="modal-header">
+                          <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          <h4 className="modal-title">新建问题</h4>
                         </div>
-                        <div className="form-group">
-                          <div className="col-sm-12">
-                            <textarea className="form-control" rows="12" placeholder="内容" valueLink={this.linkState('newArticleContent')} />
-                          </div>
+                        <div className="modal-body">
+                          <form className="form-horizontal">
+                            <div className="form-group">
+                              <div className="col-sm-12">
+                                <input type="email" className="form-control" placeholder="标题" valueLink={this.linkState('newArticleTitle')} />
+                              </div>
+                            </div>
+                            <div className="form-group">
+                              <div className="col-sm-12">
+                                <textarea className="form-control" rows="12" placeholder="内容" valueLink={this.linkState('newArticleContent')} />
+                              </div>
+                            </div>
+                          </form>
                         </div>
-                      </form>
-                    </div>
-                    <div className="modal-footer">
-                      <button className="btn btn-default" data-dismiss="modal">取消</button>
-                      <button className="btn btn-primary" onClick={this.handleAddArticle}>提交</button>
+                        <div className="modal-footer">
+                          <button className="btn btn-default" data-dismiss="modal">取消</button>
+                          <button className="btn btn-primary" onClick={this.handleAddArticle}>提交</button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
 
-            </div>
-          )}
-          <div>
-              <a className="edit" onClick={this.handleEditClick}>{this.state.editing ? "取消" : "编辑"}</a>
-              {this.state.editing ? (
-                <div>
+                </div>
+              )}
+              <div>
+                <a className="edit" onClick={this.handleEditClick}>{this.state.editing ? "取消" : "编辑"}</a>
+                {this.state.editing ? (
+                  <div>
                     <textarea className="form-control" rows="12" data-id="{{ question.pk }}" valueLink={this.linkState('editedArticleContent')} />
                     <button className="btn btn-default" onClick={this.handleEditArticle}>提交</button>
-                </div>
-              ) : (
-                <p className="content">{this.state.article.content}</p>
-              )}
-          </div>
+                  </div>
+                ) : (
+                  <p className="content">{this.state.article.content}</p>
+                )}
+              </div>
+            </div>
+          )}
         </article>
         {this.state.nextArticleID && (
           <Article articleID={this.state.nextArticleID} parent={this} />

@@ -90,6 +90,10 @@ a.close {
     top: 24px;
 }
 
+.draft {
+    margin-bottom: 16px;
+}
+
 .edit {
     position: absolute;
     left: -15px;
