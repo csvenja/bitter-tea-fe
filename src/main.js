@@ -2,7 +2,7 @@ var React = require('react/addons');
 var Rlite = require('rlite-router');
 var Select = require('react-select');
 
-var kBaseURL = "http://bitter-tea.svenja.im"
+var kBaseURL = "http://bitter-tea.svenja.im";
 // var kBaseURL = "http://localhost:8000"
 
 var App = React.createClass({
@@ -223,7 +223,7 @@ var Article = React.createClass({
                   return (
                     <li key={q.id}>
                       <a className="reference" onClick={this.handleLinkClick.bind(null, q.id)}>{q.title}</a>{' '}
-                      <span className="logic" title="联系的逻辑属性">TODO</span>{' '}
+                      <span className="logic" title="联系的逻辑属性">{q.logic}</span>{' '}
                       {this.state.editing && (
                         <a className="remove-reference" onClick={this.handleRemoveLink.bind(null, q.id)}>删除</a>
                       )}
